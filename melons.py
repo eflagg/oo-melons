@@ -1,5 +1,6 @@
 """This file should have our order classes in it."""
 from random import randint
+from datetime import datetime
 
 class AbstractMelonOrder(object):
 
@@ -11,6 +12,10 @@ class AbstractMelonOrder(object):
         self.shipped = False
         self.order_type = order_type
         self.tax = tax
+        try:
+            self.qty < 100
+        except TooManyMelonsError:
+            print "TOO MANY MELONS!!!"
 
 
     def get_base_price(self):
@@ -18,6 +23,13 @@ class AbstractMelonOrder(object):
 
         base_price = randint(5, 9)
 
+        current_date_and_time = datetime.timetuple(datetime.now())
+        current_hour = current_date_and_time[3]
+        current_day = current_date_and_time[6]
+
+        if current_day in [0, 1, 2, 3, 4] and current_hour in [8, 9, 10, 11]:
+            base_price += 4
+        
         return base_price
 
 
@@ -86,3 +98,6 @@ class GovernmentMelonOrder(AbstractMelonOrder):
         if passed == True:
             self.passed_inspection = True
 
+
+class TooManyMelonsError(ValueError):
+    """An exception that is raised when an order is more than 100 melons."""
